@@ -1,15 +1,11 @@
-
-import BasicButtons from './components/BasicButtons'
-
-
+import BasicButtons from './components/BasicButtons';
 
 function App() {
-  
   return (
     <div>
-      <BasicButtons/>
+      <BasicButtons />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
