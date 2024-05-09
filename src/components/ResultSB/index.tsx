@@ -3,11 +3,11 @@ import axios from 'axios';
 import './ResultSB.css';
 
 function ResultSB() {
-  const [progress, setProgress] = useState(69);
+  const [progress, setProgress] = useState(50);
   const [isComplete, setIsComplete] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [projects, setProjects] = useState([]);
-  const [domain, setDomain] = useState('www.test.com');
+  const [domain, setDomain] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,12 +32,12 @@ function ResultSB() {
   // 데이터를 가져오는 함수
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get('https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/main');
+      const response = await axios.get('https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/result');
       const data = response.data;
 
       if (data.success) {
-        setProjects(data.projects);
-        setDomain('www.test.com'); // 실제 데이터로 변경 필요
+        setDomain(data.data.end_point); // 도메인 주소 설정
+        setProjects(data.data.meta_data); // 메타데이터 설정
       }
     } catch (error) {
       console.error('프로젝트 데이터 가져오기 실패:', error);
@@ -59,8 +59,10 @@ function ResultSB() {
           <div>
             <h3>SB 메타데이터:</h3>
             <ul>
-              {projects.map((project, index) => (
-                <li key={index}>{project}</li>
+              {Object.entries(projects).map(([key, value], index) => (
+                <li key={index}>
+                  {key}: {Array.isArray(value) ? value.join(', ') : value}
+                </li>
               ))}
             </ul>
           </div>
