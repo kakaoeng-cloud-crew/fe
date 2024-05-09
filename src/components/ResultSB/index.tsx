@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './ResultSB.css';
 
 function ResultSB() {
   const [progress, setProgress] = useState(69);
   const [isComplete, setIsComplete] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [domain, setDomain] = useState('www.test.com');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -26,19 +29,39 @@ function ResultSB() {
     setShowResults(true);
   };
 
+  // 데이터를 가져오는 함수
+  const fetchProjectData = async () => {
+    try {
+      const response = await axios.get('https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/main');
+      const data = response.data;
+
+      if (data.success) {
+        setProjects(data.projects);
+        setDomain('www.test.com'); // 실제 데이터로 변경 필요
+      }
+    } catch (error) {
+      console.error('프로젝트 데이터 가져오기 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (showResults) {
+      fetchProjectData();
+    }
+  }, [showResults]);
+
   return (
     <div className="resultsb-wrapper">
       <h1 className="resultsb-title">SB 생성하기</h1>
       {showResults ? (
         <div className="resultsb-results">
-          <h2>SB의 도메인 주소: www.test.com</h2>
+          <h2>SB의 도메인 주소: {domain}</h2>
           <div>
             <h3>SB 메타데이터:</h3>
             <ul>
-              <li>메타데이터 1: 값 1</li>
-              <li>메타데이터 2: 값 2</li>
-              <li>메타데이터 3: 값 3</li>
-              {/* 필요한 다른 메타데이터 추가 */}
+              {projects.map((project, index) => (
+                <li key={index}>{project}</li>
+              ))}
             </ul>
           </div>
         </div>
