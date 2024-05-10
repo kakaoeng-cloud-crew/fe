@@ -1,3 +1,4 @@
+// components/CreateSB/index.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateSB.css';
@@ -54,8 +55,8 @@ function CreateSB() {
       setFileErrorMessage(null);
     }
 
-    // Simulate success by navigating to the result page
-    navigate('/result-sb');
+    // 성공적으로 프로젝트 생성 시 Result 페이지로 이동
+    navigate('/result');
   };
 
   const validateProjectName = (name: string) => {

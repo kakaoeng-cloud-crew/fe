@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import CreateSB from './components/CreateSB';
 import ResultSB from './components/ResultSB';
+import MainSB from './components/MainSB';
 import homeIcon from './image/home.jpg';
 
 function App() {
@@ -13,8 +14,9 @@ function App() {
         </Link>
       </div>
       <Routes>
-        <Route path="/" element={<CreateSB />} />
-        <Route path="/result-sb" element={<ResultSB />} />
+        <Route path="/" element={<MainSB />} />
+        <Route path="/create" element={<CreateSB />} />
+        <Route path="/result" element={<ResultSB />} />
       </Routes>
     </Router>
   );
