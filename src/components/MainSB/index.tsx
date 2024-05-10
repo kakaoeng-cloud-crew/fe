@@ -1,7 +1,6 @@
-// MainPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MainSB.css'; // Assuming you have translated your CSS to a CSS file that can be imported.
+import './MainSB.css'; // CSS 파일 이름 확인 필요
 
 const baseURL = 'https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/main';
 
@@ -20,13 +19,14 @@ const MainPage: React.FC = () => {
     setCurrentProject(projectName);
     try {
       const response = await fetch(`${baseURL}/${projectName}`);
-      if (!response.ok) throw new Error('네트워크 응답 오류');
+      if (!response.ok) throw new Error(`네트워크 응답 오류: ${response.status}`);
       const data: ProjectInfo = await response.json();
       setProjectInfo('프로젝트 정보: ' + JSON.stringify(data));
+      setPopupVisible(true); // 상태 업데이트 확인
     } catch (error) {
       setProjectInfo('오류: ' + error.message);
+      setPopupVisible(true); // 오류가 발생해도 팝업을 보여주기
     }
-    setPopupVisible(true);
   };
 
   const closePopup = () => {
@@ -40,6 +40,7 @@ const MainPage: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       setProjectInfo('데이터 성공적으로 삭제됨');
+      setTimeout(() => closePopup(), 2000); // 데이터 삭제 후 자동으로 팝업을 닫기
     } catch (error) {
       setProjectInfo('데이터 삭제 오류: ' + error.message);
     }
@@ -58,7 +59,8 @@ const MainPage: React.FC = () => {
       ))}
 
       {popupVisible && (
-        <div className="popup">
+        <div className="popup" style={{ display: 'block' }}>
+          {' '}
           <div className="popup-content">
             <span className="close-btn" onClick={closePopup}>
               &times;
