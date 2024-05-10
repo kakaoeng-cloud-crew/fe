@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MainSB.css'; // CSS 파일 이름 확인 필요
+import './MainSB.css';
 
 const baseURL = 'https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/main';
 

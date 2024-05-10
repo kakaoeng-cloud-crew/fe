@@ -1,0 +1,292 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0
+
+info:
+  version: "1.0.0"
+  title: cloud-crew-api
+  description: RAPA KAKAO ENG 4 Final Project-Cloud Crew
+
+paths:
+  # 기본 페이지는 항상 get 요청을 통해 업데이트된 프로젝트 목록을 기반으로 컴포넌트를 업데이트 해야 합니다.
+  /api/v1/projects:
+    get:
+      summary: 프로젝트 목록 전체 조회
+      description: 현재 생성된 프로젝트 리스트를 모두 조회합니다. (AJAX로 비동기적 통신 구성 필요)
+      operationId: getProjects # 함수 이름
+      responses:
+        '200':
+          description: 리스트 반환 성공, 실패 시 빈 배열 반환
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Projects'
+                    example: ["ObjectId01", "ObjectId02", "ObjectId03"]
+        '404':
+          description: 요청한 프로젝트에 대한 정보를 찾을 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Projects error 전체 목록을 조회할 수 없습니다."
+        '500':
+          description: 서버 내부 오류로 인해 요청을 처리할 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Projects error 서버에서 요청을 처리하는 동안 오류가 발생했습니다."
+    post:
+      summary: 새로운 샌드박스 테스트 프로젝트 생성하기
+      description: 데이터를 받아 새로운 샌드박스 테스트 프로젝트 생성
+      operationId: newProject
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                project_name:
+                  type: string
+                  minLength: 4
+                  maxLength: 20
+                  description: 프로젝트 이름은 고유해야 하며, 글자 수는 4자 이상 20자 이하로 설정합니다.
+                  example: "myProject01"
+                template:
+                  type: string
+                  format: binary
+                  description: 템플릿은 압축 파일입니다. 파일을 선택하고 이를 버킷에 저장합니다.
+                values:
+                  type: string
+                  format: binary
+                  description: 템플릿에 쓰일 값에 대한 얌 명세서입니다. 파일을 선택하고 이를 버킷에 저장합니다.
+      responses:
+        '201':
+          description: 프로젝트 생성 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: string
+                    example: "ObjectId01"
+        '400':
+          description: 잘못된 요청 입력 데이터 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] newProject() input error"
+
+        '500':
+          description: 내부 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] post - /create 서버에서 요청을 처리하는 동안 오류가 발생했습니다."
+
+  # main 페이지 보일 프로젝트 목록들은 버튼 이벤트를 가지고 있고 각 컴포넌트들은 2가지 API를 가집니다.
+  /api/v1/projects/{project_id}:
+    get:
+      summary: 단일 프로젝트 상세 내용 조회
+      description: Projects 리소스에서 단일 프로젝트 도큐먼트의 데이터를 조회하여 접속 end_point와 meta_data를 보여줍니다.
+      operationId: getProject
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project_id로 구분하여 API를 구성했습니다.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 프로젝트 상세 정보 반환 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  end_point:
+                    type: string
+                    example: "http://example.com"
+                  meta_data:
+                    type: object
+                    example:
+                      key: "value"
+                      another_key: "value"
+                      numberic_key: 123
+                      boolean_key: true
+                      array_key: ["item1", "item2"]
+        '404':
+          description: 요청한 프로젝트에 대한 정보를 찾을 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Project error 요청한 프로젝트의 대한 정보를 찾을 수 없습니다."
+        '500':
+          description: 서버 내부 오류로 인해 요청을 처리할 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Project error 서버에서 요청을 처리하는 동안 오류가 발생했습니다."
+    delete:
+      summary: 단일 프로젝트 삭제
+      description: 주어진 project_name에 해당하는 프로젝트를 삭제합니다.
+      operationId: delProject
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: project_id로 구분하여 API를 구성했습니다. 삭제된 데이터는 Backup 컬렉션에 백업됩니다.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 프로젝트 삭제에 성공했습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "프로젝트 삭제 성공!"
+        '404':
+          description: 요청한 프로젝트에 대한 정보를 찾을 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] delete - 삭제할 프로젝트를 찾을 수 없습니다."
+        '500':
+          description: 서버 내부 오류로 인해 요청을 처리할 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] delete - 서버에서 요청을 처리하는 동안 오류가 발생했습니다."
+  /api/v1/projects/{project_name}:
+    get:
+      summary: 생성된 프로젝트의 엔드포인트 주소 접근
+      description: Ingress Controller에 생성된 프로젝트의 엔드포인트를 추가하는 형식으로 엔드포인트를 제공할 수 있을 것으로 보입니다. 개념 증명 필요!
+      operationId: getEndpoint
+      parameters:
+        - name: project_name
+          in: path
+          required: true
+          description: 생성된 헬름 프로젝트의 endPoint를 받아 라우팅 합니다.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 프로젝트 페이지 접속 성공
+          content:
+            text/html:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: 요청한 프로젝트 페이지가 존재하지 않습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Endpoint - Not found project page"
+        '500':
+          description: 서버 내부 오류로 인해 요청을 처리할 수 없습니다.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "[ERROR] GET Endpoint - Server error"
+
+# 가상 스키마 구조 선언
+components:
+  # 보안 정책 명세
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  # 데이터베이스 스키마 명세 (MongoDB)
+  schemas:
+    Projects:
+      type: object
+      required:
+        - project_name
+        - _id
+      properties:
+        _id:
+          type: string
+          description: 몽고DB에서 도큐먼트들에 자동으로 제공하는 고유 식별자 속성입니다.
+          example: ObjectId("617bb275991d88a585f9fc14")
+        project_name:
+          type: string
+          description: 프로젝트 이름 속성으로 k8s의 네임스페이스, helm명으로 사용 및 인덱싱을 적용
+          example: "myProject01"
+        helm_bucket_url:
+          type: string
+          description: AWS S3 스토리지에 저장되는 버킷 주소
+          example: "s3://helm-templates/wordpress-blog.tgz"
+        values_bucket_url:
+          type: string
+          description: AWS S3 스토리지에 저장되는 버킷 주소
+          example: "s3://values-yaml/values.yaml"
+        end_point:
+          type: string
+          description: 생성된 프로젝트의 엔드포인트 주소
+          example: "http://cloud-crew/projects/{project_name}"
+        meta_data:
+          type: object
+          additionalProperties: true
+          description: 프로젝트에 관련된 추가 메타데이터. 키-값 쌍으로 구성되며, 값의 타입은 제한하지 않습니다.
+          example: { key: "value", key2: "value", key3: "value"}
+        day:
+          type: string
+          description: 생성된 날짜에 대한 정보를 저장하는 속성입니다.
+          example: "2024/05/07 14:35:59"
+# 전역 보안 정책 명세
+security:
+  - ApiKeyAuth: []
