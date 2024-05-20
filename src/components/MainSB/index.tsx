@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 
-const baseURL = 'https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0';
+const baseURL = 'http://43.207.121.104:8000';
 
 interface ProjectInfo {
-  title: string; // 가정: API 응답에서 프로젝트의 이름이 'title' 필드에 저장되어 있음
+  title: string;
   description: string;
 }
 
@@ -17,7 +17,7 @@ interface Project {
 const MainPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProject, setCurrentProject] = useState<string>('');
-  const [projectInfo, setProjectInfo] = useState<string>('');
+  const [projectInfo, setProjectInfo] = useState<ProjectInfo | string>('');
   const [popupVisible, setPopupVisible] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -26,13 +26,18 @@ const MainPage: React.FC = () => {
       try {
         const response = await fetch(`${baseURL}/api/v1/projects`);
         if (!response.ok) throw new Error('네트워크 응답 오류');
-        const jsonResponse = await response.json();
-        const projectIds = jsonResponse.projects;
+        const projectIds = await response.json();
         const projectsData = await Promise.all(
           projectIds.map(async (projectId) => {
-            const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
-            const projectData = await response.json();
-            return { id: projectId, name: projectData.title }; // 프로젝트의 'title'을 'name'으로 매핑
+            try {
+              const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
+              if (!response.ok) throw new Error('프로젝트 정보 로딩 실패');
+              const projectData = await response.json();
+              return { id: projectId, name: projectData.title };
+            } catch (error) {
+              console.error('프로젝트 상세 로딩 실패:', error);
+              return { id: projectId, name: `${projectId}` }; // ID를 포함하여 실패 메시지 출력
+            }
           })
         );
         setProjects(projectsData);
@@ -81,7 +86,7 @@ const MainPage: React.FC = () => {
     <div className="projects-grid">
       {projects.map((project) => (
         <div key={project.id} className="project-box" onClick={() => openPopup(project.id)}>
-          {project.id}
+          {project.name}
         </div>
       ))}
 
@@ -92,7 +97,11 @@ const MainPage: React.FC = () => {
               &times;
             </span>
             <h2>{currentProject}</h2>
-            <p>{projectInfo}</p>
+            <p>
+              {typeof projectInfo === 'string'
+                ? projectInfo
+                : `프로젝트 정보: ${projectInfo.title} - ${projectInfo.description}`}
+            </p>
             <button onClick={deleteData}>데이터 삭제하기</button>
           </div>
         </div>
