@@ -1,18 +1,11 @@
 /* 프로젝트 그리드 스타일 */
 .projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding: 40px;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-}
-
-/* 반응형 그리드: 화면이 좁을 경우 1열로 표시 */
-@media (max-width: 600px) {
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
+  justify-content: center;
+  height: 100vh; /* 화면 전체 높이 */
+  text-align: center;
 }
 
 /* 프로젝트 박스 스타일 */
@@ -82,7 +75,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 20px;
-  background-color: #4CAF50;
+  background-color: #28a745; /* 초록색으로 변경 */
   color: white;
   border: none;
   border-radius: 5px;
