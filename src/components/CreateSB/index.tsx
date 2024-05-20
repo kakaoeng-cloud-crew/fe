@@ -1,4 +1,3 @@
-// components/CreateSB/index.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateSB.css';
@@ -40,7 +39,7 @@ function CreateSB() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateProjectName(projectName)) {
       setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 합니다.');
       return;
@@ -55,8 +54,29 @@ function CreateSB() {
       setFileErrorMessage(null);
     }
 
-    // 성공적으로 프로젝트 생성 시 Result 페이지로 이동
-    navigate('/result');
+    const formData = new FormData();
+    formData.append('project_name', projectName);
+    formData.append('template', helmFile);
+    formData.append('values', valueFile);
+
+    try {
+      const response = await fetch('http://43.207.68.7:8000/api/v1/projects', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail ? JSON.stringify(errorData.detail) : '프로젝트 생성 실패');
+      }
+
+      navigate('/result');
+    } catch (error) {
+      setErrorMessage(`프로젝트 생성 중 오류가 발생했습니다. 다시 시도해 주세요. (${error.message})`);
+    }
   };
 
   const validateProjectName = (name: string) => {

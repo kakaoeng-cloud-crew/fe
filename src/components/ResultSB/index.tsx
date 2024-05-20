@@ -6,7 +6,7 @@ function ResultSB() {
   const [progress, setProgress] = useState(50);
   const [isComplete, setIsComplete] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState({});
   const [domain, setDomain] = useState('');
 
   useEffect(() => {
@@ -29,16 +29,17 @@ function ResultSB() {
     setShowResults(true);
   };
 
-  // 데이터를 가져오는 함수
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get('https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/result');
+      const response = await axios.get(
+        'https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/api/v1/projects/{project_name}'
+      );
       const data = response.data;
+      console.log('API Response:', data);
 
-      if (data.success) {
-        setDomain(data.data.end_point); // 도메인 주소 설정
-        setProjects(data.data.meta_data); // 메타데이터 설정
-      }
+      // 응답 데이터 설정
+      setDomain(data.end_point);
+      setProjects(data.meta_data);
     } catch (error) {
       console.error('프로젝트 데이터 가져오기 실패:', error);
     }
@@ -61,7 +62,7 @@ function ResultSB() {
             <ul>
               {Object.entries(projects).map(([key, value], index) => (
                 <li key={index}>
-                  {key}: {Array.isArray(value) ? value.join(', ') : value}
+                  {key}: {Array.isArray(value) ? value.join(', ') : value.toString()}
                 </li>
               ))}
             </ul>
