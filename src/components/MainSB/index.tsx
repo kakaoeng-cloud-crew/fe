@@ -95,14 +95,23 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <div className="projects-grid">
-      {projects.length === 0 && <NotificationBanner message="프로젝트가 없습니다. 프로젝트를 생성해주세요!" />}
-
-      {projects.map((project) => (
-        <div key={project.id} className="project-box" onClick={() => openPopup(project)}>
-          {project.project_name}
-        </div>
-      ))}
+    <div className="projects-container">
+      {projects.length === 0 ? (
+        <NotificationBanner message="프로젝트가 없습니다. 프로젝트를 생성해주세요!" />
+      ) : (
+        <>
+          <div className="projects-grid">
+            {projects.map((project) => (
+              <div key={project.id} className="project-box" onClick={() => openPopup(project)}>
+                {project.project_name}
+              </div>
+            ))}
+          </div>
+          <button className="create-button" onClick={goToCreatePage}>
+            생성하기
+          </button>
+        </>
+      )}
 
       {popupVisible && currentProject && (
         <div className="popup" style={{ display: 'block' }}>
@@ -124,10 +133,6 @@ const MainPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      <button className="create-button" onClick={goToCreatePage}>
-        생성하기
-      </button>
     </div>
   );
 };

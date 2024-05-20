@@ -1,18 +1,56 @@
-/* 프로젝트 그리드 스타일 */
-.projects-grid {
+/* 전체 페이지 스타일 */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* 홈 아이콘 스타일 */
+.home-icon {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  z-index: 1000; /* 항상 위에 보이도록 */
+  cursor: pointer;
+}
+
+/* 프로젝트 컨테이너 스타일 */
+.projects-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh; /* 화면 전체 높이 */
-  text-align: center;
+  justify-content: flex-start;
+  padding-top: 60px; /* 상단 여백 추가 */
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+}
+
+/* 프로젝트 그리드 스타일 */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2개씩 정렬 */
+  gap: 20px; /* 간격을 넉넉히 설정 */
+  justify-content: center; /* 항상 가운데 정렬 */
+  align-items: center;
+  width: 100%;
+  max-width: 800px; /* 최대 너비 설정 */
+  margin-bottom: 20px; /* 아래 여백 추가 */
+}
+
+/* 반응형 그리드: 화면이 좁을 경우 1열로 표시 */
+@media (max-width: 600px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px; /* 좁은 화면에서는 간격 축소 */
+  }
 }
 
 /* 프로젝트 박스 스타일 */
 .project-box {
   background-color: #ffffff;
   padding: 30px;
-  height: 150px;
+  height: 150px; /* 높이 조정 */
+  width: 300px; /* 너비 조정 */
   text-align: center;
   border: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -70,10 +108,7 @@
 
 /* 생성하기 버튼 스타일 */
 .create-button {
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 20px 0; /* 프로젝트 목록 아래 여백 추가 */
   padding: 10px 20px;
   background-color: #28a745; /* 초록색으로 변경 */
   color: white;
@@ -81,4 +116,8 @@
   border-radius: 5px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.create-button:hover {
+  background-color: #218838; /* 호버 시 더 어두운 초록색으로 변경 */
 }
