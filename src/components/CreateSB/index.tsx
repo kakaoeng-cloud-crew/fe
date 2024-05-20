@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
 function CreateSB() {
@@ -14,6 +15,13 @@ function CreateSB() {
   const [projectNameErrorMessage, setProjectNameErrorMessage] = useState<string | null>(null);
   const [fileErrorMessage, setFileErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const context = useContext(ProjectContext);
+
+  if (!context) {
+    throw new Error('ProjectContext must be used within a ProjectProvider');
+  }
+
+  const { setProjectId } = context;
 
   const formatFileSize = (size: number) => {
     if (size < 1024) return `${size} B`;
@@ -60,7 +68,7 @@ function CreateSB() {
     formData.append('values', valueFile);
 
     try {
-      const response = await fetch('http://43.207.68.7:8000/api/v1/projects', {
+      const response = await fetch('http://43.207.121.104:8000/api/v1/projects', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -73,6 +81,10 @@ function CreateSB() {
         throw new Error(errorData.detail ? JSON.stringify(errorData.detail) : '프로젝트 생성 실패');
       }
 
+      const data = await response.json();
+      const projectId = data.project_id;
+
+      setProjectId(projectId); // Set projectId in context
       navigate('/result');
     } catch (error) {
       setErrorMessage(`프로젝트 생성 중 오류가 발생했습니다. 다시 시도해 주세요. (${error.message})`);

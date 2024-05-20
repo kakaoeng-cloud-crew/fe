@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { ProjectContext } from '../../context/ProjectContext';
 import './ResultSB.css';
 
 function ResultSB() {
+  const context = useContext(ProjectContext);
+
+  if (!context) {
+    throw new Error('ProjectContext must be used within a ProjectProvider');
+  }
+
+  const { projectId } = context;
   const [progress, setProgress] = useState(50);
   const [isComplete, setIsComplete] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -10,6 +18,8 @@ function ResultSB() {
   const [domain, setDomain] = useState('');
 
   useEffect(() => {
+    console.log('Project ID:', projectId); // Log projectId for debugging
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         const next = prev + 1;
@@ -22,7 +32,7 @@ function ResultSB() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [projectId]);
 
   const handleCloseModal = () => {
     setIsComplete(false);
@@ -31,9 +41,7 @@ function ResultSB() {
 
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get(
-        'https://virtserver.swaggerhub.com/Victoria-549/test/1.0.0/api/v1/projects/{project_name}'
-      );
+      const response = await axios.get(`http://43.207.121.104:8000/api/v1/projects/${projectId}`);
       const data = response.data;
       console.log('API Response:', data);
 
