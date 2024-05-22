@@ -1,41 +1,68 @@
-.banner {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.notification-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    height: 100vh;
+    padding: 20px;
+    width: 100%;
+    background-color: #f4f4f4;
+    overflow: hidden;
 }
 
-.exclamation-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #ffcc00;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.title {
+    font-size: 3em;
+    color: #333;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.exclamation-mark {
-    font-size: 2em;
-    color: #fff;
+.text-and-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.bottom-buttons {
-    margin-top: 20px;
+.icon-container {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 20px;  // 마진을 20px로 증가
 }
 
 .create-button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 1em;
     color: #fff;
-    background-color: #4CAF50;
+    background-color: #60a5fa;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 .create-button:hover {
-    background-color: #218838; /* 호버 시 더 어두운 초록색으로 변경 */
+    background-color: #3182ce;
+}
+
+.text-and-icon h2 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.text-and-icon p {
+    font-size: 1.2em;
+    color: #666;
 }

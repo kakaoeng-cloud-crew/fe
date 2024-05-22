@@ -1,36 +1,26 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate를 임포트합니다.
+import { useNavigate } from 'react-router-dom';
 import './NotificationBanner.css';
+import projectIcon from '../../image/project.png'; // 이미지 파일 경로를 올바르게 설정하세요
 
 const NotificationBanner: React.FC = () => {
-  const navigate = useNavigate(); // useNavigate 훅을 사용합니다.
+  const navigate = useNavigate();
 
   const handleCreateClick = () => {
-    console.log('생성하기 버튼 클릭');
-    navigate('/create'); // '/create' 경로로 이동합니다.
+    navigate('/create');
   };
 
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <div className="banner">
-        <div className="exclamation-circle">
-          <div className="exclamation-mark">!</div>
-        </div>
-        <span>프로젝트가 없습니다. 프로젝트를 생성해주세요!</span>
+    <div className="notification-container">
+      <h1 className="title">프로젝트</h1>
+      <div className="text-and-icon">
+        <img src={projectIcon} alt="Project Icon" className="icon-container" />
+        <h2>프로젝트가 없습니다!</h2>
+        <p>새 프로젝트를 생성하려면 '생성하기'를 클릭하세요.</p>
       </div>
-      <div className="bottom-buttons">
-        <button className="create-button" onClick={handleCreateClick}>
-          생성하기
-        </button>
-      </div>
+      <button className="create-button" onClick={handleCreateClick}>
+        생성하기
+      </button>
     </div>
   );
 };
