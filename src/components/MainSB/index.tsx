@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 
-const baseURL = 'http://43.207.121.104:8000';
+const baseURL = 'http://back-end-service';
 
 interface ProjectInfo {
   end_point: string;
@@ -124,12 +124,14 @@ const MainPage: React.FC = () => {
               <p>{projectInfo}</p>
             ) : (
               <div>
-                <p>Endpoint: {projectInfo.end_point}</p>
-                <p>Metadata: {projectInfo.meta_data}</p>
-                <p>생성일자: {projectInfo.day}</p>
+                <p style={{ marginBottom: '20px' }}>Endpoint: {projectInfo.end_point}</p>
+                <p style={{ marginBottom: '20px' }}>Metadata: {projectInfo.meta_data}</p>
+                <p style={{ marginBottom: '20px' }}>생성일자: {projectInfo.day}</p>
               </div>
             )}
-            <button onClick={deleteData}>데이터 삭제하기</button>
+            <button className="delete-button" onClick={deleteData}>
+              데이터 삭제하기
+            </button>
           </div>
         </div>
       )}

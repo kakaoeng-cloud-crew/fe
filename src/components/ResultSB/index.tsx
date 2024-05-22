@@ -41,7 +41,7 @@ function ResultSB() {
 
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get(`http://43.207.121.104:8000/api/v1/projects/${projectId}`);
+      const response = await axios.get(`http://back-end-service/api/v1/projects/${projectId}`);
       const data = response.data;
       console.log('API Response:', data);
 
@@ -51,6 +51,7 @@ function ResultSB() {
     } catch (error) {
       console.error('프로젝트 데이터 가져오기 실패:', error);
     }
+    3;
   };
 
   useEffect(() => {
