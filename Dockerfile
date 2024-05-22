@@ -13,7 +13,7 @@ RUN npm run build
 
 # 빌드 결과물 불러와서 nginx에 올리기
 FROM nginx:stable-alpine3.17-slim
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
