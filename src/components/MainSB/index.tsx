@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 
-const baseURL = 'http://18.182.6.40:8000';
+const baseURL = 'http://back-end-service';
 
 interface ProjectInfo {
   end_point: string;

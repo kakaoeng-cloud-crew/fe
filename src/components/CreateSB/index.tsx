@@ -68,7 +68,7 @@ function CreateSB() {
     formData.append('values', valueFile);
 
     try {
-      const response = await fetch('http://18.182.6.40:8000/api/v1/projects', {
+      const response = await fetch('http://back-end-service/api/v1/projects', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

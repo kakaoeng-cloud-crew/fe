@@ -41,7 +41,7 @@ function ResultSB() {
 
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get(`http://18.182.6.40:8000/api/v1/projects/${projectId}`);
+      const response = await axios.get(`http://back-end-service/api/v1/projects/${projectId}`);
       const data = response.data;
       console.log('API Response:', data);
 
