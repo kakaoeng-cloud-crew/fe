@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { ProjectContext } from '../../context/ProjectContext';
 import './ResultSB.css';
@@ -18,7 +18,7 @@ function ResultSB() {
   const [domain, setDomain] = useState('');
 
   useEffect(() => {
-    console.log('Project ID:', projectId); // Log projectId for debugging
+    console.log('Project ID:', projectId);
 
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -41,14 +41,13 @@ function ResultSB() {
 
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get(`http://back-end-service/api/v1/projects/${projectId}`);
+      const response = await axios.get(`http://18.182.6.40:8000/api/v1/projects/${projectId}`);
       const data = response.data;
       console.log('API Response:', data);
 
-      // 응답 데이터 설정
       setDomain(data.end_point);
       setProjects(data.meta_data);
-    } catch (error: any) {
+    } catch (error) {
       console.error('프로젝트 데이터 가져오기 실패:', error);
     }
   };
@@ -68,11 +67,14 @@ function ResultSB() {
           <div>
             <h3>SB 메타데이터:</h3>
             <ul>
-              {Object.entries(projects).map(([key, value], index) => (
-                <li key={index}>
-                  {key}: {Array.isArray(value) ? value.join(', ') : value.toString()}
-                </li>
-              ))}
+              {Object.entries(projects).map(([key, value], index) => {
+                const displayValue = Array.isArray(value) ? value.join(', ') : value != null ? value.toString() : '';
+                return (
+                  <li key={index}>
+                    {key}: {displayValue}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
