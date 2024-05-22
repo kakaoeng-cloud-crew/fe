@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 
-const baseURL = 'http://back-end-service';
+const baseURL = 'http://18.182.6.40:8000';
 
 interface ProjectInfo {
   end_point: string;
@@ -115,11 +115,11 @@ const MainPage: React.FC = () => {
 
       {popupVisible && currentProject && (
         <div className="popup" style={{ display: 'block' }}>
-          <div className="popup-content">
+          <div className="popup-content" style={{ textAlign: 'center' }}>
             <span className="close-btn" onClick={closePopup}>
               &times;
             </span>
-            <h2>{currentProject.project_name}</h2>
+            <h2 style={{ marginBottom: '20px' }}>{currentProject.project_name}</h2>
             {typeof projectInfo === 'string' ? (
               <p>{projectInfo}</p>
             ) : (
@@ -130,7 +130,7 @@ const MainPage: React.FC = () => {
               </div>
             )}
             <button className="delete-button" onClick={deleteData}>
-              데이터 삭제하기
+              프로젝트 삭제하기
             </button>
           </div>
         </div>
