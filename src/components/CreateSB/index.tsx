@@ -86,7 +86,7 @@ function CreateSB() {
 
       setProjectId(projectId); // Set projectId in context
       navigate('/result');
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage(`프로젝트 생성 중 오류가 발생했습니다. 다시 시도해 주세요. (${error.message})`);
     }
   };

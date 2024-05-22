@@ -13,12 +13,12 @@ interface ProjectInfo {
 
 interface Project {
   id: string;
-  project_name: string; // 이전에 name을 사용했던 부분을 project_name으로 변경
+  project_name: string;
 }
 
 interface CurrentProject {
   id: string;
-  project_name: string; // 이전에 name을 사용했던 부분을 project_name으로 변경
+  project_name: string;
 }
 
 const MainPage: React.FC = () => {
@@ -36,20 +36,20 @@ const MainPage: React.FC = () => {
         if (!response.ok) throw new Error('네트워크 응답 오류');
         const projectIds = await response.json();
         const projectsData = await Promise.all(
-          projectIds.map(async (projectId) => {
+          projectIds.map(async (projectId: string) => {
             try {
               const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
               if (!response.ok) throw new Error('프로젝트 정보 로딩 실패');
               const projectData = await response.json();
-              return { id: projectId, project_name: projectData.project_name }; // name을 project_name으로 변경
-            } catch (error) {
+              return { id: projectId, project_name: projectData.project_name };
+            } catch (error: any) {
               console.error('프로젝트 상세 로딩 실패:', error);
-              return { id: projectId, project_name: `${projectId}` }; // 실패 시 ID를 project_name으로 사용
+              return { id: projectId, project_name: `${projectId}` };
             }
           })
         );
         setProjects(projectsData);
-      } catch (error) {
+      } catch (error: any) {
         console.error('프로젝트 로딩 실패:', error);
       }
     };
@@ -65,7 +65,7 @@ const MainPage: React.FC = () => {
       const data: ProjectInfo = await response.json();
       setProjectInfo(data);
       setPopupVisible(true);
-    } catch (error) {
+    } catch (error: any) {
       setProjectInfo('오류: ' + error.message);
       setPopupVisible(true);
     }
@@ -85,7 +85,7 @@ const MainPage: React.FC = () => {
         setPopupVisible(false);
         setRefresh((prev) => !prev);
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       setProjectInfo('데이터 삭제 오류: ' + error.message);
     }
   };
@@ -97,7 +97,7 @@ const MainPage: React.FC = () => {
   return (
     <div className="projects-container">
       {projects.length === 0 ? (
-        <NotificationBanner message="프로젝트가 없습니다. 프로젝트를 생성해주세요!" />
+        <NotificationBanner message="프로젝트가 없습니다." />
       ) : (
         <>
           <div className="projects-grid">
