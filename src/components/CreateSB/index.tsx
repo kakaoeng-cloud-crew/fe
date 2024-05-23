@@ -1,9 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
-function CreateSB() {
+const baseURL = 'http://cloudcrew.site';
+
+const CreateSB: React.FC = () => {
   const [projectName, setProjectName] = useState('');
   const [helmFile, setHelmFile] = useState<File | null>(null);
   const [helmFileName, setHelmFileName] = useState<string | null>(null);
@@ -14,6 +16,7 @@ function CreateSB() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [projectNameErrorMessage, setProjectNameErrorMessage] = useState<string | null>(null);
   const [fileErrorMessage, setFileErrorMessage] = useState<string | null>(null);
+  const [existingProjectNames, setExistingProjectNames] = useState<string[]>([]);
   const navigate = useNavigate();
   const context = useContext(ProjectContext);
 
@@ -22,6 +25,34 @@ function CreateSB() {
   }
 
   const { setProjectId } = context;
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/projects`);
+        if (!response.ok) throw new Error('네트워크 응답 오류');
+        const projectIds = await response.json();
+        const projectsData = await Promise.all(
+          projectIds.map(async (projectId: string) => {
+            try {
+              const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
+              if (!response.ok) throw new Error('프로젝트 정보 로딩 실패');
+              const projectData = await response.json();
+              return projectData.project_name;
+            } catch (error: any) {
+              console.error('프로젝트 상세 로딩 실패:', error);
+              return `${projectId}`;
+            }
+          })
+        );
+        setExistingProjectNames(projectsData);
+      } catch (error: any) {
+        console.error('프로젝트 로딩 실패:', error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const formatFileSize = (size: number) => {
     if (size < 1024) return `${size} B`;
@@ -47,9 +78,20 @@ function CreateSB() {
     }
   };
 
+  const validateProjectName = (name: string) => {
+    return name.length >= 4 && name.length <= 20;
+  };
+
+  const isProjectNameDuplicate = (name: string) => {
+    return existingProjectNames.includes(name);
+  };
+
   const handleSubmit = async () => {
     if (!validateProjectName(projectName)) {
       setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 합니다.');
+      return;
+    } else if (isProjectNameDuplicate(projectName)) {
+      setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다. 다른 이름을 입력해 주세요.');
       return;
     } else {
       setProjectNameErrorMessage(null);
@@ -68,7 +110,7 @@ function CreateSB() {
     formData.append('values', valueFile);
 
     try {
-      const response = await fetch('http://cloudcrew.site/api/v1/projects', {
+      const response = await fetch(`${baseURL}/api/v1/projects`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -89,10 +131,6 @@ function CreateSB() {
     } catch (error: any) {
       setErrorMessage(`프로젝트 생성 중 오류가 발생했습니다. 다시 시도해 주세요. (${error.message})`);
     }
-  };
-
-  const validateProjectName = (name: string) => {
-    return name.length >= 4 && name.length <= 20;
   };
 
   return (
@@ -155,6 +193,6 @@ function CreateSB() {
       </div>
     </div>
   );
-}
+};
 
 export default CreateSB;
