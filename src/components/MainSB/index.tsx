@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 
-const baseURL = 'http://back-end-service';
+const baseURL = 'http://cloudcrew.site';
 
 interface ProjectInfo {
   end_point: string;
