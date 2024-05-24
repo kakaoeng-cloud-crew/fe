@@ -97,7 +97,7 @@ const MainPage: React.FC = () => {
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제되었습니다');
+      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제되었습니다!');
       setTimeout(() => {
         setPopupVisible(false);
         setRefresh((prev) => !prev);
