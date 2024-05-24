@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'http://18.179.11.96:8000';
 
 interface ProjectInfo {
   end_point: string;
@@ -27,6 +27,9 @@ const MainPage: React.FC = () => {
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | string>('');
   const [popupVisible, setPopupVisible] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [deleteMessage, setDeleteMessage] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +52,12 @@ const MainPage: React.FC = () => {
           })
         );
         setProjects(projectsData);
+
+        const deleteMessage = localStorage.getItem('deleteMessage');
+        if (deleteMessage) {
+          setDeleteMessage(deleteMessage);
+          localStorage.removeItem('deleteMessage');
+        }
       } catch (error: any) {
         console.error('프로젝트 로딩 실패:', error);
       }
@@ -73,21 +82,33 @@ const MainPage: React.FC = () => {
 
   const closePopup = () => {
     setPopupVisible(false);
+    setShowConfirmDelete(false);
+    setIsDeleting(false);
+    setDeleteMessage('');
   };
 
   const deleteData = async () => {
     if (!currentProject) return;
+    setIsDeleting(true);
+    setDeleteMessage('데이터 삭제 중');
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      setProjectInfo('데이터 성공적으로 삭제됨');
+      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제됨');
       setTimeout(() => {
         setPopupVisible(false);
         setRefresh((prev) => !prev);
+        setIsDeleting(false);
+        setDeleteMessage('');
       }, 2000);
     } catch (error: any) {
-      setProjectInfo('데이터 삭제 오류: ' + error.message);
+      setDeleteMessage('데이터 삭제 오류: ' + error.message);
+      setIsDeleting(false);
     }
+  };
+
+  const confirmDelete = () => {
+    setShowConfirmDelete(true);
   };
 
   const goToCreatePage = () => {
@@ -129,10 +150,30 @@ const MainPage: React.FC = () => {
                 <p style={{ marginBottom: '20px' }}>생성일자: {projectInfo.day}</p>
               </div>
             )}
-            <button className="delete-button" onClick={deleteData}>
-              프로젝트 삭제하기
-            </button>
+            {isDeleting ? (
+              <p>데이터 삭제 중 ...</p>
+            ) : showConfirmDelete ? (
+              <>
+                <p>삭제 하시겠습니까?</p>
+                <button className="confirm-delete-button" onClick={deleteData}>
+                  예
+                </button>
+                <button className="cancel-button" onClick={() => setShowConfirmDelete(false)}>
+                  아니오
+                </button>
+              </>
+            ) : (
+              <button className="delete-button" onClick={confirmDelete}>
+                프로젝트 삭제하기
+              </button>
+            )}
           </div>
+        </div>
+      )}
+
+      {deleteMessage && !popupVisible && (
+        <div className="notification-banner">
+          <p>{deleteMessage}</p>
         </div>
       )}
     </div>
