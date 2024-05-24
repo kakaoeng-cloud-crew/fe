@@ -93,7 +93,7 @@ const MainPage: React.FC = () => {
   const deleteData = async () => {
     if (!currentProject) return;
     setIsDeleting(true);
-    setDeleteMessage('데이터 삭제 중');
+    setDeleteMessage('데이터 삭제 중...');
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
