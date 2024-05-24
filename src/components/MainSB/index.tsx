@@ -46,7 +46,7 @@ const MainPage: React.FC = () => {
               const projectData = await response.json();
               return { id: projectId, project_name: projectData.project_name };
             } catch (error: any) {
-              console.error('프로젝트 상세 로딩 실패:', error);
+              console.error('프로젝트 상세 로딩 실패!:', error);
               return { id: projectId, project_name: `${projectId}` };
             }
           })
