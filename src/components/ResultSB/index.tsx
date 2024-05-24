@@ -41,7 +41,7 @@ function ResultSB() {
 
   const fetchProjectData = async () => {
     try {
-      const response = await axios.get(`http://18.179.11.96:8000/api/v1/projects/${projectId}`);
+      const response = await axios.get(`http://cloudcrew.site/api/v1/projects/${projectId}`);
       const data = response.data;
       console.log('API Response:', data);
 

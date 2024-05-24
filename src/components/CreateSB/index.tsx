@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
-const baseURL = 'http://18.179.11.96:8000';
+const baseURL = 'http://cloudcrew.site';
 
 const CreateSB: React.FC = () => {
   const [projectName, setProjectName] = useState('');
@@ -57,7 +57,7 @@ const CreateSB: React.FC = () => {
   useEffect(() => {
     if (projectName.length > 0) {
       if (!validateProjectName(projectName)) {
-        setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 합니다.');
+        setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 하며, 특수문자를 포함할 수 없습니다.');
       } else if (isProjectNameDuplicate(projectName)) {
         setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다. 다른 이름을 입력해 주세요.');
       } else {
@@ -93,7 +93,8 @@ const CreateSB: React.FC = () => {
   };
 
   const validateProjectName = (name: string) => {
-    return name.length >= 4 && name.length <= 20;
+    const regex = /^[a-zA-Z0-9가-힣\s]{4,20}$/; // 특수문자를 제외하고 한글, 영문, 숫자 및 공백만 허용
+    return regex.test(name);
   };
 
   const isProjectNameDuplicate = (name: string) => {
@@ -102,7 +103,7 @@ const CreateSB: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!validateProjectName(projectName)) {
-      setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 합니다.');
+      setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 하며, 특수문자를 포함할 수 없습니다.');
       return;
     } else if (isProjectNameDuplicate(projectName)) {
       setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다. 다른 이름을 입력해 주세요.');
@@ -147,6 +148,17 @@ const CreateSB: React.FC = () => {
     }
   };
 
+  const handleProjectNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value;
+    const regex = /[^a-zA-Z0-9가-힣\s]/g;
+    if (regex.test(input)) {
+      setProjectNameErrorMessage('특수문자는 사용할 수 없습니다.');
+    } else {
+      setProjectNameErrorMessage(null);
+    }
+    setProjectName(input);
+  };
+
   return (
     <div className="container">
       <div className="card">
@@ -160,7 +172,7 @@ const CreateSB: React.FC = () => {
             className="input-field"
             placeholder="프로젝트 이름을 입력하세요"
             value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
+            onChange={handleProjectNameChange}
           />
           {projectNameErrorMessage && <div className="invalid-message">{projectNameErrorMessage}</div>}
         </div>
