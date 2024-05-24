@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'http://18.179.11.96:8000';
 
 const CreateSB: React.FC = () => {
   const [projectName, setProjectName] = useState('');
@@ -53,6 +53,20 @@ const CreateSB: React.FC = () => {
 
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    if (projectName.length > 0) {
+      if (!validateProjectName(projectName)) {
+        setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 합니다.');
+      } else if (isProjectNameDuplicate(projectName)) {
+        setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다. 다른 이름을 입력해 주세요.');
+      } else {
+        setProjectNameErrorMessage(null);
+      }
+    } else {
+      setProjectNameErrorMessage(null);
+    }
+  }, [projectName]);
 
   const formatFileSize = (size: number) => {
     if (size < 1024) return `${size} B`;
