@@ -3,7 +3,7 @@ name: Build and Push Docker image to ECR
 on:
   push:
     branches:
-      - heewon  # main 브랜치에 push가 발생할 때 워크플로우가 실행됩니다.
+      - heewon 
 
 jobs:
   build-and-push:
