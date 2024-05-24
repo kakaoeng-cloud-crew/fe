@@ -42,7 +42,7 @@ const MainPage: React.FC = () => {
           projectIds.map(async (projectId: string) => {
             try {
               const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
-              if (!response.ok) throw new Error('프로젝트 정보 로딩 실패');
+              if (!response.ok) throw new Error('프로젝트 정보 로딩 실패!');
               const projectData = await response.json();
               return { id: projectId, project_name: projectData.project_name };
             } catch (error: any) {
