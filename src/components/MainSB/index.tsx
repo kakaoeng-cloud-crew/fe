@@ -57,6 +57,9 @@ const MainPage: React.FC = () => {
         if (deleteMessage) {
           setDeleteMessage(deleteMessage);
           localStorage.removeItem('deleteMessage');
+          setTimeout(() => {
+            setDeleteMessage('');
+          }, 2500); // 2.5초 후에 메시지 삭제
         }
       } catch (error: any) {
         console.error('프로젝트 로딩 실패:', error);
@@ -94,7 +97,7 @@ const MainPage: React.FC = () => {
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제됨');
+      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제되었습니다');
       setTimeout(() => {
         setPopupVisible(false);
         setRefresh((prev) => !prev);
@@ -151,7 +154,7 @@ const MainPage: React.FC = () => {
               </div>
             )}
             {isDeleting ? (
-              <p>데이터 삭제 중 ...</p>
+              <p>데이터 삭제 중</p>
             ) : showConfirmDelete ? (
               <>
                 <p>삭제 하시겠습니까?</p>
