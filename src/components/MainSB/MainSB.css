@@ -213,3 +213,46 @@ body {
   background-color: #6B7280; /* 호버 시 더 어두운 회색 */
   transform: scale(1.05); /* 호버 시 약간 확대 */
 }
+
+/* 수정 버튼 스타일 */
+.edit-button {
+  padding: 12px 24px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  float: left;
+}
+
+.edit-button:hover {
+  background-color: #388E3C;
+  transform: scale(1.05);
+}
+
+/* 엔드포인트와 복사 버튼을 보기 좋게 스타일링 */
+.endpoint-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.endpoint-text {
+  margin-right: 10px;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* 패딩 제거 */
+}
+
+.copy-icon {
+  width: 30px; /* 아이콘 크기 조절 */
+  height: 30px;
+}

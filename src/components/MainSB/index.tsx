@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
+import copyIcon from '../../image/copy.png'; // 이미지 파일 경로를 올바르게 지정합니다.
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'http://3.113.4.45:8000';
 
 interface ProjectInfo {
   end_point: string;
@@ -118,6 +119,17 @@ const MainPage: React.FC = () => {
     navigate('/create');
   };
 
+  const goToEditPage = () => {
+    if (currentProject) {
+      navigate(`/edit/${currentProject.id}`);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert('주소가 클립보드에 복사되었습니다.');
+  };
+
   return (
     <div className="projects-container">
       {projects.length === 0 ? (
@@ -148,7 +160,12 @@ const MainPage: React.FC = () => {
               <p>{projectInfo}</p>
             ) : (
               <div>
-                <p style={{ marginBottom: '20px' }}>Endpoint: {projectInfo.end_point}</p>
+                <div className="endpoint-container">
+                  <p className="endpoint-text">Endpoint: {projectInfo.end_point}</p>
+                  <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
+                    <img src={copyIcon} alt="복사" className="copy-icon" />
+                  </button>
+                </div>
                 <p style={{ marginBottom: '20px' }}>Metadata: {projectInfo.meta_data}</p>
                 <p style={{ marginBottom: '20px' }}>생성일자: {projectInfo.day}</p>
               </div>
@@ -166,9 +183,14 @@ const MainPage: React.FC = () => {
                 </button>
               </>
             ) : (
-              <button className="delete-button" onClick={confirmDelete}>
-                프로젝트 삭제하기
-              </button>
+              <>
+                <button className="edit-button" onClick={goToEditPage}>
+                  프로젝트 수정하기
+                </button>
+                <button className="delete-button" onClick={confirmDelete}>
+                  프로젝트 삭제하기
+                </button>
+              </>
             )}
           </div>
         </div>
