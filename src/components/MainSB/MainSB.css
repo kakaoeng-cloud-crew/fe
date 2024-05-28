@@ -225,7 +225,6 @@ body {
   cursor: pointer;
   margin: 10px;
   transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
-  float: left;
 }
 
 .edit-button:hover {
@@ -236,13 +235,21 @@ body {
 /* 엔드포인트와 복사 버튼을 보기 좋게 스타일링 */
 .endpoint-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
 .endpoint-text {
+  font-weight: bold;
+}
+
+.endpoint-url {
+  background-color: #f4f4f4;
+  padding: 5px 10px;
+  border-radius: 5px;
   margin-right: 10px;
+  word-break: break-all; /* 긴 텍스트가 넘치지 않도록 줄 바꿈 */
 }
 
 .copy-button {
@@ -253,6 +260,112 @@ body {
 }
 
 .copy-icon {
-  width: 30px; /* 아이콘 크기 조절 */
-  height: 30px;
+  width: 24px; /* 아이콘 크기 조절 */
+  height: 24px;
+}
+
+/* 파일 업로드 스타일 */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.file-upload-input {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 24px;
+}
+
+.upload-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.upload-info-text {
+  margin-bottom: 4px;
+}
+
+.upload-info-size {
+  font-size: 12px;
+  color: #888;
+}
+
+/* 수정 폼 스타일 */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+form input, form select {
+  padding: 8px;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.confirm-edit-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.confirm-edit-button:hover {
+  background-color: #388E3C;
+  transform: scale(1.05);
+}
+
+/* 로딩 스피너 스타일 */
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #4CAF50;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-top: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

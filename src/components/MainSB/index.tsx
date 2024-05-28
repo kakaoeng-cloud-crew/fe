@@ -27,10 +27,14 @@ const MainPage: React.FC = () => {
   const [currentProject, setCurrentProject] = useState<CurrentProject | null>(null);
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | string>('');
   const [popupVisible, setPopupVisible] = useState<boolean>(false);
+  const [editFormVisible, setEditFormVisible] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteMessage, setDeleteMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [valueFileName, setValueFileName] = useState<string | null>(null);
+  const [valueFileSize, setValueFileSize] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,6 +82,7 @@ const MainPage: React.FC = () => {
       const data: ProjectInfo = await response.json();
       setProjectInfo(data);
       setPopupVisible(true);
+      setEditFormVisible(false);
     } catch (error: any) {
       setProjectInfo('오류: ' + error.message);
       setPopupVisible(true);
@@ -119,10 +124,54 @@ const MainPage: React.FC = () => {
     navigate('/create');
   };
 
-  const goToEditPage = () => {
-    if (currentProject) {
-      navigate(`/edit/${currentProject.id}`);
+  const toggleEditForm = () => {
+    setEditFormVisible(!editFormVisible);
+  };
+
+  const handleValueFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setValueFileName(file.name);
+      setValueFileSize(file.size);
+    } else {
+      setValueFileName(null);
+      setValueFileSize(null);
     }
+  };
+
+  const handleEditSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!currentProject) return;
+
+    setIsLoading(true);
+
+    const formData = new FormData();
+    const fileInput = (event.target as any).values;
+    if (fileInput.files[0]) {
+      formData.append('values', fileInput.files[0]);
+    }
+
+    try {
+      const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const updatedProjectInfo: ProjectInfo = await response.json();
+      setProjectInfo(updatedProjectInfo);
+      setEditFormVisible(false);
+      setIsLoading(false);
+    } catch (error: any) {
+      console.error('파일 업로드 실패:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const formatFileSize = (size: number) => {
+    if (size < 1024) return size + ' bytes';
+    else if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
+    else return (size / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   const copyToClipboard = (text: string) => {
@@ -156,19 +205,51 @@ const MainPage: React.FC = () => {
               &times;
             </span>
             <h2 style={{ marginBottom: '20px' }}>{currentProject.project_name}</h2>
-            {typeof projectInfo === 'string' ? (
-              <p>{projectInfo}</p>
+            {editFormVisible ? (
+              <form onSubmit={handleEditSubmit}>
+                <div className="input-group">
+                  <div className="label">Value 파일</div>
+                  <div className="file-upload-container">
+                    <label htmlFor="value-file-upload" className="cursor-pointer">
+                      <span className="upload-icon">📂</span>
+                      <span className="text-blue-600 hover:text-blue-800">Click to upload or drag and drop</span>
+                      <input
+                        id="value-file-upload"
+                        type="file"
+                        className="file-upload-input"
+                        onChange={handleValueFileUpload}
+                      />
+                    </label>
+                    <div className="upload-info">
+                      <div className="upload-info-text truncate">
+                        {valueFileName ? valueFileName : 'values.yaml file'}
+                      </div>
+                      <div className="upload-info-size">
+                        {valueFileSize !== null ? formatFileSize(valueFileSize) : ''}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" className="confirm-edit-button">
+                  수정하기
+                </button>
+                {isLoading && <div className="loading-spinner"></div>}
+              </form>
             ) : (
-              <div>
+              <>
                 <div className="endpoint-container">
-                  <p className="endpoint-text">Endpoint: {projectInfo.end_point}</p>
-                  <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
+                  <p className="endpoint-text">Endpoint:</p>
+                  <p className="endpoint-url">{(projectInfo as ProjectInfo).end_point}</p>
+                  <button
+                    className="copy-button"
+                    onClick={() => copyToClipboard((projectInfo as ProjectInfo).end_point)}
+                  >
                     <img src={copyIcon} alt="복사" className="copy-icon" />
                   </button>
                 </div>
-                <p style={{ marginBottom: '20px' }}>Metadata: {projectInfo.meta_data}</p>
-                <p style={{ marginBottom: '20px' }}>생성일자: {projectInfo.day}</p>
-              </div>
+                <p style={{ marginBottom: '20px' }}>Metadata: {(projectInfo as ProjectInfo).meta_data}</p>
+                <p style={{ marginBottom: '20px' }}>생성일자: {(projectInfo as ProjectInfo).day}</p>
+              </>
             )}
             {isDeleting ? (
               <p>데이터 삭제 중...</p>
@@ -182,16 +263,16 @@ const MainPage: React.FC = () => {
                   아니오
                 </button>
               </>
-            ) : (
+            ) : !editFormVisible ? (
               <>
-                <button className="edit-button" onClick={goToEditPage}>
+                <button className="edit-button" onClick={toggleEditForm}>
                   프로젝트 수정하기
                 </button>
                 <button className="delete-button" onClick={confirmDelete}>
                   프로젝트 삭제하기
                 </button>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       )}
