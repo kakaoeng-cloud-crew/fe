@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'http://3.113.4.45:8000';
 
 const CreateSB: React.FC = () => {
   const [projectName, setProjectName] = useState('');
@@ -17,6 +17,7 @@ const CreateSB: React.FC = () => {
   const [projectNameErrorMessage, setProjectNameErrorMessage] = useState<string | null>(null);
   const [fileErrorMessage, setFileErrorMessage] = useState<string | null>(null);
   const [existingProjectNames, setExistingProjectNames] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // 로딩 상태 추가
   const navigate = useNavigate();
   const context = useContext(ProjectContext);
 
@@ -66,7 +67,7 @@ const CreateSB: React.FC = () => {
     } else {
       setProjectNameErrorMessage(null);
     }
-  }, [projectName]);
+  }, [projectName, existingProjectNames]);
 
   const formatFileSize = (size: number) => {
     if (size < 1024) return `${size} B`;
@@ -124,6 +125,8 @@ const CreateSB: React.FC = () => {
     formData.append('template', helmFile);
     formData.append('values', valueFile);
 
+    setLoading(true); // 로딩 상태를 true로 설정
+
     try {
       const response = await fetch(`${baseURL}/api/v1/projects`, {
         method: 'POST',
@@ -145,6 +148,8 @@ const CreateSB: React.FC = () => {
       navigate('/result');
     } catch (error: any) {
       setErrorMessage(`프로젝트 생성 중 오류가 발생했습니다. 다시 시도해 주세요. (${error.message})`);
+    } finally {
+      setLoading(false); // 로딩 상태를 false로 설정
     }
   };
 
@@ -216,6 +221,11 @@ const CreateSB: React.FC = () => {
             SB 생성하기
           </button>
         </div>
+        {loading && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+          </div>
+        )}
       </div>
     </div>
   );

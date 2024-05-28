@@ -1,186 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './MainSB.css';
-import NotificationBanner from './NotificationBanner';
+import { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { ProjectContext } from '../../context/ProjectContext';
+import './ResultSB.css';
+import clipImage from '../../image/copy.png'; // 이미지 경로를 설정합니다.
 
-const baseURL = 'http://cloudcrew.site';
+function ResultSB() {
+  const context = useContext(ProjectContext);
 
-interface ProjectInfo {
-  end_point: string;
-  day: string;
-  meta_data: string;
-}
+  if (!context) {
+    throw new Error('ProjectContext must be used within a ProjectProvider');
+  }
 
-interface Project {
-  id: string;
-  project_name: string;
-}
-
-interface CurrentProject {
-  id: string;
-  project_name: string;
-}
-
-const MainPage: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [currentProject, setCurrentProject] = useState<CurrentProject | null>(null);
-  const [projectInfo, setProjectInfo] = useState<ProjectInfo | string>('');
-  const [popupVisible, setPopupVisible] = useState<boolean>(false);
-  const [refresh, setRefresh] = useState<boolean>(false);
-  const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const [deleteMessage, setDeleteMessage] = useState<string>('');
-  const navigate = useNavigate();
+  const { projectId } = context;
+  const [projects, setProjects] = useState({});
+  const [domain, setDomain] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectData = async () => {
       try {
-        const response = await fetch(`${baseURL}/api/v1/projects`);
-        if (!response.ok) throw new Error('네트워크 응답 오류');
-        const projectIds = await response.json();
-        const projectsData = await Promise.all(
-          projectIds.map(async (projectId: string) => {
-            try {
-              const response = await fetch(`${baseURL}/api/v1/projects/${projectId}`);
-              if (!response.ok) throw new Error('프로젝트 정보 로딩 실패!');
-              const projectData = await response.json();
-              return { id: projectId, project_name: projectData.project_name };
-            } catch (error: any) {
-              console.error('프로젝트 상세 로딩 실패!:', error);
-              return { id: projectId, project_name: `${projectId}` };
-            }
-          })
-        );
-        setProjects(projectsData);
+        const response = await axios.get(`http://3.113.4.45:8000/api/v1/projects/${projectId}`);
+        const data = response.data;
+        console.log('API Response:', data);
 
-        const deleteMessage = localStorage.getItem('deleteMessage');
-        if (deleteMessage) {
-          setDeleteMessage(deleteMessage);
-          localStorage.removeItem('deleteMessage');
-          setTimeout(() => {
-            setDeleteMessage('');
-          }, 2500); // 2.5초 후에 메시지 삭제
-        }
-      } catch (error: any) {
-        console.error('프로젝트 로딩 실패:', error);
+        setDomain(data.end_point);
+        setProjects(data.meta_data);
+      } catch (error) {
+        console.error('프로젝트 데이터 가져오기 실패:', error);
+        setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
       }
     };
 
-    fetchProjects();
-  }, [refresh]);
+    fetchProjectData();
+  }, [projectId]);
 
-  const openPopup = async (project: Project) => {
-    setCurrentProject({ id: project.id, project_name: project.project_name });
-    try {
-      const response = await fetch(`${baseURL}/api/v1/projects/${project.id}`);
-      if (!response.ok) throw new Error(`네트워크 응답 오류: ${response.status}`);
-      const data: ProjectInfo = await response.json();
-      setProjectInfo(data);
-      setPopupVisible(true);
-    } catch (error: any) {
-      setProjectInfo('오류: ' + error.message);
-      setPopupVisible(true);
-    }
-  };
-
-  const closePopup = () => {
-    setPopupVisible(false);
-    setShowConfirmDelete(false);
-    setIsDeleting(false);
-    setDeleteMessage('');
-  };
-
-  const deleteData = async () => {
-    if (!currentProject) return;
-    setIsDeleting(true);
-    setDeleteMessage('데이터 삭제 중');
-    try {
-      const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      localStorage.setItem('deleteMessage', '데이터가 성공적으로 삭제되었습니다!');
-      setTimeout(() => {
-        setPopupVisible(false);
-        setRefresh((prev) => !prev);
-        setIsDeleting(false);
-        setDeleteMessage('');
-      }, 2000);
-    } catch (error: any) {
-      setDeleteMessage('데이터 삭제 오류: ' + error.message);
-      setIsDeleting(false);
-    }
-  };
-
-  const confirmDelete = () => {
-    setShowConfirmDelete(true);
-  };
-
-  const goToCreatePage = () => {
-    navigate('/create');
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(domain);
+    setCopied(true);
+    alert('주소가 클립보드에 복사되었습니다.'); // alert 창 추가
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="projects-container">
-      {projects.length === 0 ? (
-        <NotificationBanner message="프로젝트가 없습니다." />
+    <div className="resultsb-wrapper">
+      <h1 className="resultsb-title">SB 생성 결과</h1>
+      {error ? (
+        <div className="resultsb-error">{error}</div>
       ) : (
-        <>
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <div key={project.id} className="project-box" onClick={() => openPopup(project)}>
-                {project.project_name}
-              </div>
-            ))}
+        <div className="resultsb-results">
+          <h2>
+            SB의 도메인 주소: {domain}
+            <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" onClick={handleCopyToClipboard} />
+          </h2>
+          <div>
+            <h3>SB 메타데이터:</h3>
+            <ul>
+              {Object.entries(projects).map(([key, value], index) => {
+                const displayValue = Array.isArray(value) ? value.join(', ') : value != null ? value.toString() : '';
+                return (
+                  <li key={index}>
+                    {key}: {displayValue}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          <button className="create-button" onClick={goToCreatePage}>
-            생성하기
-          </button>
-        </>
-      )}
-
-      {popupVisible && currentProject && (
-        <div className="popup" style={{ display: 'block' }}>
-          <div className="popup-content" style={{ textAlign: 'center' }}>
-            <span className="close-btn" onClick={closePopup}>
-              &times;
-            </span>
-            <h2 style={{ marginBottom: '20px' }}>{currentProject.project_name}</h2>
-            {typeof projectInfo === 'string' ? (
-              <p>{projectInfo}</p>
-            ) : (
-              <div>
-                <p style={{ marginBottom: '20px' }}>Endpoint: {projectInfo.end_point}</p>
-                <p style={{ marginBottom: '20px' }}>Metadata: {projectInfo.meta_data}</p>
-                <p style={{ marginBottom: '20px' }}>생성일자: {projectInfo.day}</p>
-              </div>
-            )}
-            {isDeleting ? (
-              <p>데이터 삭제 중...</p>
-            ) : showConfirmDelete ? (
-              <>
-                <p>삭제 하시겠습니까?</p>
-                <button className="confirm-delete-button" onClick={deleteData}>
-                  예
-                </button>
-                <button className="cancel-button" onClick={() => setShowConfirmDelete(false)}>
-                  아니오
-                </button>
-              </>
-            ) : (
-              <button className="delete-button" onClick={confirmDelete}>
-                프로젝트 삭제하기
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {deleteMessage && !popupVisible && (
-        <div className="notification-banner">
-          <p>{deleteMessage}</p>
         </div>
       )}
     </div>
   );
-};
+}
 
-export default MainPage;
+export default ResultSB;
