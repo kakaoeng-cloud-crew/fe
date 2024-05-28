@@ -6,10 +6,20 @@ import copyIcon from '../../image/copy.png'; // 이미지 파일 경로를 올�
 
 const baseURL = 'http://3.113.4.45:8000';
 
+interface MetaData {
+  helm_name: string;
+  last_deployed: string;
+  namespace: string;
+  status: string;
+  revision: number;
+  chart: string;
+  app_version: string;
+}
+
 interface ProjectInfo {
   end_point: string;
   day: string;
-  meta_data: string;
+  meta_data: MetaData;
 }
 
 interface Project {
@@ -200,7 +210,7 @@ const MainPage: React.FC = () => {
 
       {popupVisible && currentProject && (
         <div className="popup" style={{ display: 'block' }}>
-          <div className="popup-content" style={{ textAlign: 'center' }}>
+          <div className="popup-content">
             <span className="close-btn" onClick={closePopup}>
               &times;
             </span>
@@ -231,7 +241,7 @@ const MainPage: React.FC = () => {
                   </div>
                 </div>
                 <button type="submit" className="confirm-edit-button">
-                  수정하기
+                  업데이트
                 </button>
                 {isLoading && <div className="loading-spinner"></div>}
               </form>
@@ -247,8 +257,15 @@ const MainPage: React.FC = () => {
                     <img src={copyIcon} alt="복사" className="copy-icon" />
                   </button>
                 </div>
-                <p style={{ marginBottom: '20px' }}>Metadata: {(projectInfo as ProjectInfo).meta_data}</p>
-                <p style={{ marginBottom: '20px' }}>생성일자: {(projectInfo as ProjectInfo).day}</p>
+                <div className="metadata-container">
+                  <p>이름: {(projectInfo as ProjectInfo).meta_data.helm_name}</p>
+                  <p>마지막 수정 날짜: {(projectInfo as ProjectInfo).meta_data.last_deployed}</p>
+                  <p>위치: {(projectInfo as ProjectInfo).meta_data.namespace}</p>
+                  <p>상태: {(projectInfo as ProjectInfo).meta_data.status}</p>
+                  <p>리비전: {(projectInfo as ProjectInfo).meta_data.revision}</p>
+                  <p>차트: {(projectInfo as ProjectInfo).meta_data.chart}</p>
+                  <p>버전: {(projectInfo as ProjectInfo).meta_data.app_version}</p>
+                </div>
               </>
             )}
             {isDeleting ? (

@@ -151,7 +151,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   position: relative;
   margin: auto;
-  text-align: center;
+  text-align: center; /* 텍스트를 왼쪽 정렬로 설정 */
 }
 
 .close-btn {
@@ -236,7 +236,7 @@ body {
 .endpoint-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* 왼쪽 정렬 */
   margin-bottom: 20px;
 }
 
@@ -368,4 +368,9 @@ form input, form select {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* 메타데이터 스타일 */
+.metadata-container {
+  text-align: left; /* 왼쪽 정렬 */
 }
