@@ -38,6 +38,7 @@ function ResultSB() {
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(domain);
     setCopied(true);
+    alert('주소가 클립보드에 복사되었습니다.'); // alert 창 추가
     setTimeout(() => setCopied(false), 2000);
   };
 
