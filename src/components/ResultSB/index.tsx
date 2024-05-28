@@ -41,7 +41,11 @@ const ResultSB: React.FC = () => {
         const data = response.data;
         console.log('API Response:', data);
 
-        setProjectInfo(data);
+        if (data) {
+          setProjectInfo(data);
+        } else {
+          setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
+        }
       } catch (error) {
         console.error('프로젝트 데이터 가져오기 실패:', error);
         setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
@@ -77,12 +81,12 @@ const ResultSB: React.FC = () => {
               {projectInfo.meta_data ? (
                 <ul>
                   <li>- 이름: {projectInfo.meta_data.helm_name}</li>
-                  <li>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</li>
                   <li>- 위치: {projectInfo.meta_data.namespace}</li>
                   <li>- 상태: {projectInfo.meta_data.status}</li>
                   <li>- 리비전: {projectInfo.meta_data.revision}</li>
                   <li>- 차트: {projectInfo.meta_data.chart}</li>
                   <li>- 버전: {projectInfo.meta_data.app_version}</li>
+                  <li>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</li>
                 </ul>
               ) : (
                 <p>메타데이터가 없습니다.</p>

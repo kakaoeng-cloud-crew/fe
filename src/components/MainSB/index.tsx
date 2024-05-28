@@ -259,12 +259,12 @@ const MainPage: React.FC = () => {
                 </div>
                 <div className="metadata-container">
                   <p>이름: {(projectInfo as ProjectInfo).meta_data.helm_name}</p>
-                  <p>마지막 수정 날짜: {(projectInfo as ProjectInfo).meta_data.last_deployed}</p>
                   <p>위치: {(projectInfo as ProjectInfo).meta_data.namespace}</p>
                   <p>상태: {(projectInfo as ProjectInfo).meta_data.status}</p>
                   <p>리비전: {(projectInfo as ProjectInfo).meta_data.revision}</p>
                   <p>차트: {(projectInfo as ProjectInfo).meta_data.chart}</p>
                   <p>버전: {(projectInfo as ProjectInfo).meta_data.app_version}</p>
+                  <p>마지막 수정 날짜: {(projectInfo as ProjectInfo).meta_data.last_deployed}</p>
                 </div>
               </>
             )}
