@@ -86,3 +86,9 @@
   font-size: 0.875rem;
   margin-left: 0.5rem;
 }
+
+.resultsb-loading,
+.resultsb-error {
+  color: #e53e3e;
+  font-size: 1rem;
+}
