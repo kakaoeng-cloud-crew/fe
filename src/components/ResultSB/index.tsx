@@ -76,6 +76,7 @@ const ResultSB: React.FC = () => {
               도메인 주소: {projectInfo.end_point}
               <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" onClick={handleCopyToClipboard} />
             </h2>
+            {copied && <p>주소가 클립보드에 복사되었습니다.</p>} {/* 복사됨 메시지 표시 */}
             <div>
               <h3>SB 메타데이터:</h3>
               {projectInfo.meta_data ? (
