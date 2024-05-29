@@ -311,6 +311,12 @@ body {
   color: #888;
 }
 
+/* 파일 경고 스타일 */
+.file-warning {
+  color: red;
+  margin-top: 10px;
+}
+
 /* 수정 폼 스타일 */
 form {
   display: flex;
@@ -369,6 +375,15 @@ form input, form select {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* 로딩 메시지 스타일 */
+.loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 /* 메타데이터 스타일 */

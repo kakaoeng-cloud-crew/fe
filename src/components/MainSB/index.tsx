@@ -43,8 +43,10 @@ const MainPage: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteMessage, setDeleteMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [updateMessage, setUpdateMessage] = useState<string>('');
   const [valueFileName, setValueFileName] = useState<string | null>(null);
   const [valueFileSize, setValueFileSize] = useState<number | null>(null);
+  const [fileWarning, setFileWarning] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,6 +78,15 @@ const MainPage: React.FC = () => {
             setDeleteMessage('');
           }, 2500); // 2.5초 후에 메시지 삭제
         }
+
+        const updateMessage = localStorage.getItem('updateMessage');
+        if (updateMessage) {
+          setUpdateMessage(updateMessage);
+          localStorage.removeItem('updateMessage');
+          setTimeout(() => {
+            setUpdateMessage('');
+          }, 2500); // 2.5초 후에 메시지 삭제
+        }
       } catch (error: any) {
         console.error('프로젝트 로딩 실패:', error);
       }
@@ -104,12 +115,14 @@ const MainPage: React.FC = () => {
     setShowConfirmDelete(false);
     setIsDeleting(false);
     setDeleteMessage('');
+    setUpdateMessage('');
+    setFileWarning('');
   };
 
   const deleteData = async () => {
     if (!currentProject) return;
     setIsDeleting(true);
-    setDeleteMessage('데이터 삭제 중');
+    setDeleteMessage('데이터 삭제 중...');
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -143,27 +156,31 @@ const MainPage: React.FC = () => {
     if (file) {
       setValueFileName(file.name);
       setValueFileSize(file.size);
+      setFileWarning('');
     } else {
       setValueFileName(null);
       setValueFileSize(null);
     }
   };
 
-  const handleEditSubmit = async (event: React.FormEvent) => {
+  const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!currentProject) return;
+
+    const fileInput = event.currentTarget.elements.namedItem('values') as HTMLInputElement;
+    if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+      setFileWarning('파일을 선택하지 않았습니다.');
+      return;
+    }
 
     setIsLoading(true);
 
     const formData = new FormData();
-    const fileInput = (event.target as any).values;
-    if (fileInput.files[0]) {
-      formData.append('values', fileInput.files[0]);
-    }
+    formData.append('values', fileInput.files[0]);
 
     try {
-      const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}/upload`, {
-        method: 'POST',
+      const response = await fetch(`${baseURL}/api/v1/projects/${currentProject.id}`, {
+        method: 'PUT',
         body: formData,
       });
 
@@ -172,8 +189,11 @@ const MainPage: React.FC = () => {
       setProjectInfo(updatedProjectInfo);
       setEditFormVisible(false);
       setIsLoading(false);
+      localStorage.setItem('updateMessage', '업데이트가 완료되었습니다!');
+      setPopupVisible(false); // 업데이트 완료 후 팝업 닫기
+      setRefresh((prev) => !prev);
     } catch (error: any) {
-      console.error('파일 업로드 실패:', error);
+      console.error('프로젝트 업데이트 실패:', error);
       setIsLoading(false);
     }
   };
@@ -225,6 +245,7 @@ const MainPage: React.FC = () => {
                       <span className="text-blue-600 hover:text-blue-800">Click to upload or drag and drop</span>
                       <input
                         id="value-file-upload"
+                        name="values"
                         type="file"
                         className="file-upload-input"
                         onChange={handleValueFileUpload}
@@ -238,38 +259,49 @@ const MainPage: React.FC = () => {
                         {valueFileSize !== null ? formatFileSize(valueFileSize) : ''}
                       </div>
                     </div>
+                    {fileWarning && <div className="file-warning">{fileWarning}</div>}
                   </div>
                 </div>
-                <button type="submit" className="confirm-edit-button">
-                  업데이트
-                </button>
-                {isLoading && <div className="loading-spinner"></div>}
+                {!isLoading && (
+                  <button type="submit" className="confirm-edit-button">
+                    업데이트
+                  </button>
+                )}
+                {isLoading && (
+                  <div className="loading-message">
+                    업데이트 중...
+                    <div className="loading-spinner"></div>
+                  </div>
+                )}
               </form>
             ) : (
-              <>
-                <div className="endpoint-container">
-                  <p className="endpoint-text">Endpoint: </p>
-                  <input type="text" value={(projectInfo as ProjectInfo).end_point} readOnly className="endpoint-url" />
-                  <button
-                    className="copy-button"
-                    onClick={() => copyToClipboard((projectInfo as ProjectInfo).end_point)}
-                  >
-                    <img src={copyIcon} alt="복사" className="copy-icon" />
-                  </button>
-                </div>
-                <div className="metadata-container">
-                  <p>이름: {(projectInfo as ProjectInfo).meta_data.helm_name}</p>
-                  <p>위치: {(projectInfo as ProjectInfo).meta_data.namespace}</p>
-                  <p>상태: {(projectInfo as ProjectInfo).meta_data.status}</p>
-                  <p>리비전: {(projectInfo as ProjectInfo).meta_data.revision}</p>
-                  <p>차트: {(projectInfo as ProjectInfo).meta_data.chart}</p>
-                  <p>버전: {(projectInfo as ProjectInfo).meta_data.app_version}</p>
-                  <p>마지막 수정 날짜: {(projectInfo as ProjectInfo).meta_data.last_deployed}</p>
-                </div>
-              </>
+              projectInfo &&
+              typeof projectInfo !== 'string' && (
+                <>
+                  <div className="endpoint-container">
+                    <p className="endpoint-text">도메인 주소:</p>
+                    <input type="text" value={projectInfo.end_point} readOnly className="endpoint-url" />
+                    <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
+                      <img src={copyIcon} alt="복사" className="copy-icon" />
+                    </button>
+                  </div>
+                  <div className="metadata-container">
+                    <p>- 이름: {projectInfo.meta_data.helm_name}</p>
+                    <p>- 위치: {projectInfo.meta_data.namespace}</p>
+                    <p>- 상태: {projectInfo.meta_data.status}</p>
+                    <p>- 리비전: {projectInfo.meta_data.revision}</p>
+                    <p>- 차트: {projectInfo.meta_data.chart}</p>
+                    <p>- 버전: {projectInfo.meta_data.app_version}</p>
+                    <p>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</p>
+                  </div>
+                </>
+              )
             )}
             {isDeleting ? (
-              <p>데이터 삭제 중...</p>
+              <div className="loading-message">
+                데이터 삭제 중...
+                <div className="loading-spinner"></div>
+              </div>
             ) : showConfirmDelete ? (
               <>
                 <p>삭제 하시겠습니까?</p>
@@ -297,6 +329,12 @@ const MainPage: React.FC = () => {
       {deleteMessage && !popupVisible && (
         <div className="notification-banner">
           <p>{deleteMessage}</p>
+        </div>
+      )}
+
+      {updateMessage && !popupVisible && (
+        <div className="notification-banner">
+          <p>{updateMessage}</p>
         </div>
       )}
     </div>
