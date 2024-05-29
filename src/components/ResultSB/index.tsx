@@ -32,8 +32,7 @@ const ResultSB: React.FC = () => {
   const { projectId } = context;
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const [loading, setLoading] = useState(true); // 로딩 상태 관리
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -48,10 +47,8 @@ const ResultSB: React.FC = () => {
           setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
         }
       } catch (error) {
-        console.error('프로젝트 데이터 가져오기 실패!:', error);
+        console.error('프로젝트 데이터 가져오기 실패:', error);
         setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
-      } finally {
-        setLoading(false); // 로딩 상태 해제
       }
     };
 
@@ -70,20 +67,17 @@ const ResultSB: React.FC = () => {
   return (
     <div className="resultsb-wrapper">
       <h1 className="resultsb-title">SB 생성 결과</h1>
-      {loading ? (
-        <div className="resultsb-loading">로딩 중...</div> // 로딩 중일 때 표시
-      ) : error ? (
+      {error ? (
         <div className="resultsb-error">{error}</div>
       ) : (
         projectInfo && (
           <div className="resultsb-results">
             <h2>
-              도메인 주소:
-              <input type="text" value={projectInfo.end_point} readOnly className="resultsb-endpoint" />
+              도메인 주소: {projectInfo.end_point}
               <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" onClick={handleCopyToClipboard} />
             </h2>
-            <div className="resultsb-metadata">
-              <h3>SB 메타데이터</h3>
+            <div>
+              <h3>SB 메타데이터:</h3>
               {projectInfo.meta_data ? (
                 <ul>
                   <li>- 이름: {projectInfo.meta_data.helm_name}</li>
