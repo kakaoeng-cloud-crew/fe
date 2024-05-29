@@ -248,8 +248,8 @@ const MainPage: React.FC = () => {
             ) : (
               <>
                 <div className="endpoint-container">
-                  <p className="endpoint-text">Endpoint:</p>
-                  <p className="endpoint-url">{(projectInfo as ProjectInfo).end_point}</p>
+                  <p className="endpoint-text">Endpoint: </p>
+                  <input type="text" value={(projectInfo as ProjectInfo).end_point} readOnly className="endpoint-url" />
                   <button
                     className="copy-button"
                     onClick={() => copyToClipboard((projectInfo as ProjectInfo).end_point)}
