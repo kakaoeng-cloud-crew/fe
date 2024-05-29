@@ -42,6 +42,7 @@
 .resultsb-results ul {
   list-style: none;
   padding: 0;
+  text-align: left; /* 왼쪽 정렬 */
 }
 
 .resultsb-results li {
@@ -52,6 +53,18 @@
 
 .resultsb-error {
   color: red;
+  text-align: center;
+}
+
+.resultsb-endpoint {
+  width: 20rem; /* 텍스트 박스 크기 */
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  background-color: #f9fafb;
+  margin-left: 1rem;
   text-align: center;
 }
 
