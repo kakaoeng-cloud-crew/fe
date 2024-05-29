@@ -32,7 +32,7 @@ const ResultSB: React.FC = () => {
   const { projectId } = context;
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+
   const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const ResultSB: React.FC = () => {
           setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
         }
       } catch (error) {
-        console.error('프로젝트 데이터 가져오기 실패:', error);
+        console.error('프로젝트 데이터 가져오기 실패!:', error);
         setError('프로젝트 데이터를 가져오는 데 실패했습니다.');
       } finally {
         setLoading(false); // 로딩 상태 해제
