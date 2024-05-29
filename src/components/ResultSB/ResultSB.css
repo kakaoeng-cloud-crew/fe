@@ -66,6 +66,7 @@
   background-color: #f9fafb;
   margin-left: 1rem;
   text-align: center;
+  word-break: break-all; /* 긴 텍스트가 넘치지 않도록 줄 바꿈 */
 }
 
 .domain-address {
@@ -87,8 +88,10 @@
   margin-left: 0.5rem;
 }
 
-.resultsb-loading,
-.resultsb-error {
-  color: #e53e3e;
-  font-size: 1rem;
+/* 추가된 부분 */
+.endpoint-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 텍스트 박스와 아이콘을 중앙 정렬 */
+  margin-bottom: 1.5rem;
 }
