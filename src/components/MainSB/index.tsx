@@ -205,8 +205,25 @@ const MainPage: React.FC = () => {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert('주소가 클립보드에 복사되었습니다.');
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+
+    // Select the text
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+
+    try {
+      // Copy the text
+      document.execCommand('copy');
+      alert('주소가 클립보드에 복사되었습니다.');
+    } catch (err) {
+      console.error('복사 실패:', err);
+    }
+
+    // Remove the temporary textarea element
+    document.body.removeChild(textarea);
   };
 
   return (
