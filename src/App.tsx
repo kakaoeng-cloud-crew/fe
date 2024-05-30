@@ -3,7 +3,8 @@ import CreateSB from './components/CreateSB';
 import ResultSB from './components/ResultSB';
 import MainSB from './components/MainSB';
 import { ProjectProvider } from './context/ProjectContext'; // Import ProjectProvider
-import homeIcon from './image/home.jpg';
+import homeIcon from './image/home.png';
+import './App.css'; // Ensure the CSS file is imported
 
 function App() {
   return (
@@ -11,7 +12,9 @@ function App() {
       <Router>
         <div className="navigation">
           <Link to="/" className="home-link">
-            <img src={homeIcon} alt="홈" className="home-icon" />
+            <div className="home-icon">
+              <img src={homeIcon} alt="홈" />
+            </div>
           </Link>
         </div>
         <Routes>

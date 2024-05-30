@@ -218,7 +218,7 @@ const CreateSB: React.FC = () => {
         {errorMessage && <div className="error-message">{errorMessage}</div>}
         <div className="mt-6 text-center">
           <button className="btn-cbt" onClick={handleSubmit}>
-            SB 생성하기
+            생성하기
           </button>
         </div>
         {loading && (

@@ -16,7 +16,7 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ message }) => {
 
   return (
     <div className="notification-container">
-      <h1 className="title">프로젝트</h1>
+      <h1 className="title">샌드박스 테스트</h1>
       <div className="text-and-icon">
         <img src={projectIcon} alt="Project Icon" className="icon-container" />
         <h2>{message}</h2>
