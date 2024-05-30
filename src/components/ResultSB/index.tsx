@@ -20,7 +20,7 @@ interface ProjectInfo {
   meta_data: MetaData;
 }
 
-const baseURL = 'http://3.113.4.45:8000';
+const baseURL = 'http://cloudcrew.site';
 
 const ResultSB: React.FC = () => {
   const context = useContext(ProjectContext);
@@ -77,16 +77,18 @@ const ResultSB: React.FC = () => {
       ) : (
         projectInfo && (
           <div className="resultsb-results">
-            <h2>도메인 주소:</h2>
-            <div className="endpoint-container">
-              <input type="text" value={projectInfo.end_point} readOnly className="resultsb-endpoint" />
-              <button className="copy-button" onClick={handleCopyToClipboard}>
-                <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" />
-              </button>
-            </div>
-            {copied && <p>주소가 클립보드에 복사되었습니다.</p>}
+            <h2>
+              도메인 주소:
+              <div className="endpoint-container">
+                {' '}
+                {/* 추가된 div */}
+                <input type="text" value={projectInfo.end_point} readOnly className="resultsb-endpoint" />
+                <button className="copy-button" onClick={handleCopyToClipboard}>
+                  <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" />
+                </button>
+              </div>
+            </h2>
             <div>
-              <h3>SB 메타데이터:</h3>
               {projectInfo.meta_data ? (
                 <ul>
                   <li>- 이름: {projectInfo.meta_data.helm_name}</li>
