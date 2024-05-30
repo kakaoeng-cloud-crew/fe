@@ -58,26 +58,13 @@ const ResultSB: React.FC = () => {
     fetchProjectData();
   }, [projectId]);
 
-  const copyToClipboard = (text: string) => {
-    // Create a temporary textarea element
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-
-    // Select the text
-    textarea.select();
-    textarea.setSelectionRange(0, 99999); // For mobile devices
-
-    try {
-      // Copy the text
-      document.execCommand('copy');
-      alert('주소가 클립보드에 복사되었습니다.');
-    } catch (err) {
-      console.error('복사 실패:', err);
+  const handleCopyToClipboard = () => {
+    if (projectInfo) {
+      navigator.clipboard.writeText(projectInfo.end_point);
+      setCopied(true);
+      alert('주소가 클립보드에 복사되었습니다.'); // alert 창 추가
+      setTimeout(() => setCopied(false), 2000);
     }
-
-    // Remove the temporary textarea element
-    document.body.removeChild(textarea);
   };
 
   return (
@@ -90,14 +77,17 @@ const ResultSB: React.FC = () => {
       ) : (
         projectInfo && (
           <div className="resultsb-results">
-            <h2>도메인 주소:</h2>
-            <div className="endpoint-container">
-              <input type="text" value={projectInfo.end_point} readOnly className="resultsb-endpoint" />
-              <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
-                <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" />
-              </button>
-            </div>
-            {copied && <p>주소가 클립보드에 복사되었습니다.</p>}
+            <h2>
+              도메인 주소:
+              <div className="endpoint-container">
+                {' '}
+                {/* 추가된 div */}
+                <input type="text" value={projectInfo.end_point} readOnly className="resultsb-endpoint" />
+                <button className="copy-button" onClick={handleCopyToClipboard}>
+                  <img src={clipImage} alt="Copy to clipboard" className="clipboard-icon" />
+                </button>
+              </div>
+            </h2>
             <div>
               {projectInfo.meta_data ? (
                 <ul>

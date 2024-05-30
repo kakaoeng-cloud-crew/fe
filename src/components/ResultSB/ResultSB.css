@@ -1,3 +1,19 @@
+/* 추가된 부분 */
+.endpoint-container {
+  display: flex;
+  align-items: center; /* 텍스트 박스와 아이콘을 수직 중앙 정렬 */
+  justify-content: center; /* 텍스트 박스와 아이콘을 중앙 정렬 */
+  margin-bottom: 1.5rem;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+
 .resultsb-wrapper {
   display: flex;
   flex-direction: column;
@@ -33,12 +49,6 @@
   justify-content: center;
 }
 
-.resultsb-results h3 {
-  font-size: 1rem;
-  color: #374151;
-  margin-bottom: 0.75rem;
-}
-
 .resultsb-results ul {
   list-style: none;
   padding: 0;
@@ -64,9 +74,7 @@
   border: 1px solid #d1d5db;
   border-radius: 0.25rem;
   background-color: #f9fafb;
-  margin-left: 1rem;
   text-align: center;
-  word-break: break-all; /* 긴 텍스트가 넘치지 않도록 줄 바꿈 */
 }
 
 .domain-address {
@@ -91,7 +99,30 @@
 /* 추가된 부분 */
 .endpoint-container {
   display: flex;
-  align-items: center;
-  justify-content: center; /* 텍스트 박스와 아이콘을 중앙 정렬 */
+  align-items: center; /* 텍스트 박스와 아이콘을 수직 중앙 정렬 */
+  margin-top: 1.5rem; /* "도메인 주소:"보다 살짝 아래로 내림 */
   margin-bottom: 1.5rem;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center; /* 버튼 내부의 아이콘을 수직 중앙 정렬 */
+  margin-left: 0.5rem; /* 아이콘과 텍스트박스 간의 간격 조정 */
+}
+
+.resultsb-endpoint {
+  width: 20rem; /* 텍스트 박스 크기 */
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  background-color: #f9fafb;
+  text-align: center;
+  box-sizing: border-box; /* 박스 크기 계산 */
+  line-height: 1.5; /* 텍스트박스의 높이를 아이콘과 맞춤 */
 }
