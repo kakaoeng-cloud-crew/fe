@@ -17,7 +17,7 @@ function App() {
               <img src={homeIcon} alt="홈" />
             </div>
           </Link>
-          <a href="https://cloudcrew.site/monitoring" className="monitoring-link">
+          <a href="http://cloudcrew.site/monitoring" className="monitoring-link">
             <div className="monitoring-icon">
               <img src={monitoringIcon} alt="모니터링" />
             </div>
