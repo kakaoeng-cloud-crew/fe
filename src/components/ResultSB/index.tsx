@@ -20,7 +20,7 @@ interface ProjectInfo {
   meta_data: MetaData;
 }
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'https://cloudcrew.site';
 
 const ResultSB: React.FC = () => {
   const context = useContext(ProjectContext);

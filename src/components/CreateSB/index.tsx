@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectContext } from '../../context/ProjectContext';
 import './CreateSB.css';
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'https://cloudcrew.site';
 
 const CreateSB: React.FC = () => {
   const [projectName, setProjectName] = useState('');
