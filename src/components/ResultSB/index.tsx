@@ -58,11 +58,33 @@ const ResultSB: React.FC = () => {
     fetchProjectData();
   }, [projectId]);
 
+  const copyToClipboard = (text: string) => {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+
+    // Select the text
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+
+    try {
+      // Copy the text
+      document.execCommand('copy');
+      alert('주소가 클립보드에 복사되었습니다.');
+    } catch (err) {
+      console.error('복사 실패:', err);
+      alert('클립보드에 복사하는 데 실패했습니다.');
+    }
+
+    // Remove the temporary textarea element
+    document.body.removeChild(textarea);
+  };
+
   const handleCopyToClipboard = () => {
     if (projectInfo) {
-      navigator.clipboard.writeText(projectInfo.end_point);
+      copyToClipboard(projectInfo.end_point);
       setCopied(true);
-      alert('주소가 클립보드에 복사되었습니다.'); // alert 창 추가
       setTimeout(() => setCopied(false), 2000);
     }
   };
