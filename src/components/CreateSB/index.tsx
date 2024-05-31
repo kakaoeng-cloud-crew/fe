@@ -60,7 +60,7 @@ const CreateSB: React.FC = () => {
       if (!validateProjectName(projectName)) {
         setProjectNameErrorMessage('프로젝트 이름은 4글자 이상 20글자 이하여야 하며, 특수문자를 포함할 수 없습니다.');
       } else if (isProjectNameDuplicate(projectName)) {
-        setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다. 다른 이름을 입력해 주세요.');
+        setProjectNameErrorMessage('이미 존재하는 프로젝트 이름입니다.! 다른 이름을 입력해 주세요.');
       } else {
         setProjectNameErrorMessage(null);
       }
