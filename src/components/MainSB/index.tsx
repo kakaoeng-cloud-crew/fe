@@ -4,7 +4,7 @@ import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 import copyIcon from '../../image/copy.png'; // 이미지 파일 경로를 올바르게 지정합니다.
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'http://3.113.4.45:8000';
 
 interface MetaData {
   helm_name: string;
@@ -42,7 +42,7 @@ const MainPage: React.FC = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [deleteMessage, setDeleteMessage] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 초기 상태를 true로 설정
   const [updateMessage, setUpdateMessage] = useState<string>('');
   const [valueFileName, setValueFileName] = useState<string | null>(null);
   const [valueFileSize, setValueFileSize] = useState<number | null>(null);
@@ -51,10 +51,18 @@ const MainPage: React.FC = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsLoading(true); // API 호출 전에 로딩 상태 true로 설정
       try {
         const response = await fetch(`${baseURL}/api/v1/projects`);
         if (!response.ok) throw new Error('네트워크 응답 오류');
         const projectIds = await response.json();
+
+        if (projectIds.length === 0) {
+          setProjects([]);
+          setIsLoading(false);
+          return;
+        }
+
         const projectsData = await Promise.all(
           projectIds.map(async (projectId: string) => {
             try {
@@ -89,6 +97,8 @@ const MainPage: React.FC = () => {
         }
       } catch (error: any) {
         console.error('프로젝트 로딩 실패:', error);
+      } finally {
+        setIsLoading(false); // 데이터를 모두 가져온 후 로딩 상태를 false로 변경
       }
     };
 
@@ -97,6 +107,7 @@ const MainPage: React.FC = () => {
 
   const openPopup = async (project: Project) => {
     setCurrentProject({ id: project.id, project_name: project.project_name });
+    setIsLoading(true);
     try {
       const response = await fetch(`${baseURL}/api/v1/projects/${project.id}`);
       if (!response.ok) throw new Error(`네트워크 응답 오류: ${response.status}`);
@@ -107,6 +118,8 @@ const MainPage: React.FC = () => {
     } catch (error: any) {
       setProjectInfo('오류: ' + error.message);
       setPopupVisible(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -228,9 +241,16 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="projects-container">
-      {projects.length === 0 ? (
-        <NotificationBanner message="프로젝트가 없습니다." />
-      ) : (
+      {isLoading && (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <div className="loading-text">사이트 로딩 중...</div>
+        </div>
+      )}
+      {!isLoading && projects.length === 0 && (
+        <NotificationBanner message="프로젝트가 없습니다. 프로젝트를 생성해주세요." />
+      )}
+      {!isLoading && projects.length > 0 && (
         <>
           <div className="projects-grid">
             {projects.map((project) => (
@@ -252,7 +272,8 @@ const MainPage: React.FC = () => {
               &times;
             </span>
             <h2 style={{ marginBottom: '20px' }}>{currentProject.project_name}</h2>
-            {editFormVisible ? (
+            {isLoading && <div className="loading-spinner">로딩 중...</div>}
+            {!isLoading && editFormVisible && (
               <form onSubmit={handleEditSubmit}>
                 <div className="input-group">
                   <div className="label">Value 파일</div>
@@ -291,28 +312,26 @@ const MainPage: React.FC = () => {
                   </div>
                 )}
               </form>
-            ) : (
-              projectInfo &&
-              typeof projectInfo !== 'string' && (
-                <>
-                  <div className="endpoint-container">
-                    <p className="endpoint-text">도메인 주소:</p>
-                    <input type="text" value={projectInfo.end_point} readOnly className="endpoint-url" />
-                    <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
-                      <img src={copyIcon} alt="복사" className="copy-icon" />
-                    </button>
-                  </div>
-                  <div className="metadata-container">
-                    <p>- 이름: {projectInfo.meta_data.helm_name}</p>
-                    <p>- 위치: {projectInfo.meta_data.namespace}</p>
-                    <p>- 상태: {projectInfo.meta_data.status}</p>
-                    <p>- 리비전: {projectInfo.meta_data.revision}</p>
-                    <p>- 차트: {projectInfo.meta_data.chart}</p>
-                    <p>- 버전: {projectInfo.meta_data.app_version}</p>
-                    <p>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</p>
-                  </div>
-                </>
-              )
+            )}
+            {!isLoading && !editFormVisible && projectInfo && typeof projectInfo !== 'string' && (
+              <>
+                <div className="endpoint-container">
+                  <p className="endpoint-text">도메인 주소:</p>
+                  <input type="text" value={projectInfo.end_point} readOnly className="endpoint-url" />
+                  <button className="copy-button" onClick={() => copyToClipboard(projectInfo.end_point)}>
+                    <img src={copyIcon} alt="복사" className="copy-icon" />
+                  </button>
+                </div>
+                <div className="metadata-container">
+                  <p>- 이름: {projectInfo.meta_data.helm_name}</p>
+                  <p>- 위치: {projectInfo.meta_data.namespace}</p>
+                  <p>- 상태: {projectInfo.meta_data.status}</p>
+                  <p>- 리비전: {projectInfo.meta_data.revision}</p>
+                  <p>- 차트: {projectInfo.meta_data.chart}</p>
+                  <p>- 버전: {projectInfo.meta_data.app_version}</p>
+                  <p>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</p>
+                </div>
+              </>
             )}
             {isDeleting ? (
               <div className="loading-message">
