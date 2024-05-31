@@ -2,15 +2,18 @@
 
 .navigation {
   display: flex;
-  justify-content: center;
+  align-items: center;
   margin: 2rem 0 1rem 2rem; /* 상단과 좌측에 더 많은 간격 추가 */
 }
 
-.home-link {
+.home-link, .monitoring-link {
   text-decoration: none;
+  margin-right: 35px; /* 아이콘 간 간격 조정 */
+  margin-top: -22px;
+;
 }
 
-.home-icon {
+.home-icon, .monitoring-icon {
   width: 50px; /* 폭을 더 크게 설정 */
   height: 50px; /* 높이를 더 크게 설정 */
   object-fit: contain;
@@ -22,12 +25,12 @@
   transition: transform 0.2s ease;
 }
 
-.home-icon img {
+.home-icon img, .monitoring-icon img {
   width: 100%; /* 이미지 폭을 부모 요소에 맞추기 */
   height: 100%; /* 이미지 높이를 부모 요소에 맞추기 */
   object-fit: contain;
 }
 
-.home-icon:hover {
+.home-icon:hover, .monitoring-icon:hover {
   transform: scale(1.1);
 }

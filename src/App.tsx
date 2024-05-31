@@ -4,6 +4,7 @@ import ResultSB from './components/ResultSB';
 import MainSB from './components/MainSB';
 import { ProjectProvider } from './context/ProjectContext'; // Import ProjectProvider
 import homeIcon from './image/home.png';
+import monitoringIcon from './image/monitoring.png'; // Import monitoring icon
 import './App.css'; // Ensure the CSS file is imported
 
 function App() {
@@ -16,6 +17,11 @@ function App() {
               <img src={homeIcon} alt="홈" />
             </div>
           </Link>
+          <a href="https://cloudcrew.site/monitoring" className="monitoring-link">
+            <div className="monitoring-icon">
+              <img src={monitoringIcon} alt="모니터링" />
+            </div>
+          </a>
         </div>
         <Routes>
           <Route path="/" element={<MainSB />} />
