@@ -272,7 +272,12 @@ const MainPage: React.FC = () => {
               &times;
             </span>
             <h2 style={{ marginBottom: '20px' }}>{currentProject.project_name}</h2>
-            {isLoading && <div className="loading-spinner">로딩 중...</div>}
+            {isLoading && (
+              <div className="loading-message">
+                <div className="loading-text">로딩 중...</div>
+                <div className="loading-spinner"></div>
+              </div>
+            )}
             {!isLoading && editFormVisible && (
               <form onSubmit={handleEditSubmit}>
                 <div className="input-group">
@@ -307,7 +312,7 @@ const MainPage: React.FC = () => {
                 )}
                 {isLoading && (
                   <div className="loading-message">
-                    업데이트 중...
+                    <div className="loading-text">업데이트 중...</div>
                     <div className="loading-spinner"></div>
                   </div>
                 )}
@@ -331,14 +336,15 @@ const MainPage: React.FC = () => {
                   <p>- 버전: {projectInfo.meta_data.app_version}</p>
                   <p>- 마지막 수정 날짜: {projectInfo.meta_data.last_deployed}</p>
                 </div>
+                {isDeleting && (
+                  <div className="loading-message">
+                    데이터 삭제 중...
+                    <div className="loading-spinner"></div>
+                  </div>
+                )}
               </>
             )}
-            {isDeleting ? (
-              <div className="loading-message">
-                데이터 삭제 중...
-                <div className="loading-spinner"></div>
-              </div>
-            ) : showConfirmDelete ? (
+            {!isLoading && !editFormVisible && !isDeleting && showConfirmDelete && (
               <>
                 <p>삭제 하시겠습니까?</p>
                 <button className="confirm-delete-button" onClick={deleteData}>
@@ -348,7 +354,8 @@ const MainPage: React.FC = () => {
                   아니오
                 </button>
               </>
-            ) : !editFormVisible ? (
+            )}
+            {!isLoading && !editFormVisible && !isDeleting && !showConfirmDelete && (
               <>
                 <button className="edit-button" onClick={toggleEditForm}>
                   프로젝트 수정하기
@@ -357,7 +364,7 @@ const MainPage: React.FC = () => {
                   프로젝트 삭제하기
                 </button>
               </>
-            ) : null}
+            )}
           </div>
         </div>
       )}
