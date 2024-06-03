@@ -4,7 +4,7 @@ import './MainSB.css';
 import NotificationBanner from './NotificationBanner';
 import copyIcon from '../../image/copy.png'; // 이미지 파일 경로를 올바르게 지정합니다.
 
-const baseURL = 'http://cloudcrew.site';
+const baseURL = 'https://cloudcrew.site';
 
 interface MetaData {
   helm_name: string;
